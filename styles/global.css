@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800&display=swap');
+
+:root {
+  --primary: var(--dark-accent);
+  --light-accent: #114d2a;
+  --dark-accent: #4c0961;
+  --secondary: #0CEDDB;
+  --red: #ff0000;
+  --background: #5F9EA0;
+  --light-background: #2b2a2a;
+  --font-color: #280645;
+  --light-font: #aabbc3;
+  font-size: large;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 225px;
+  padding: 10px;
+}
+
+body {
+  padding: 0;
+  background-color: var(--background);
+  scroll-behavior: smooth;
+  color: var(--font-color);
+  text-align: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+strong { 
+  font-weight: bold; 
+  color: var(--light-accent);
+}
+
+a {
+  text-decoration: none;
+  color: var(--primary);
+}
+
+a:hover {
+  color: var(--dark-accent);
+}
+
+button,input[type=submit] {
+  padding: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+  border-radius: 10px;
+  background-color: var(--dark-accent);
+  color: #ffff;
+  cursor: pointer;
+  border: px solid var(--dark-accent);
+  transition: 0.2s;
+  font-size: 17px;
+}
+
+button:hover,input[type=submit]:hover {
+  border-color: var(--dark-accent);
+}
+
+input[type=text],input[type=password] {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid var(--primary);
+  background-color: #9cd6d9;
+  outline: none;
+  font-size: 15px;
+  transition: 0.2s;
+  width: 200px;
+  margin-bottom: 30px;
+  color: var(--font-color);
+  text-align: center;
+}
+
+input[type=text]:focus,input[type=password]:focus {
+  border-color: var(--dark-accent);
+}
+
+.red {
+  font-weight: bold;
+  color: var(--red);
+}
