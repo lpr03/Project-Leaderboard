@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^5.2.5",
+    "axios": "^1.7.3",
     "cookies": "^0.9.1",
     "cookies-next": "^4.2.1",
     "mongodb": "^6.8.0",
