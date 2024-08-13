@@ -1,5 +1,7 @@
-import Cookies from 'cookies'
+import Cookies from 'cookies';
 import clientPromise from "../../../lib/mongodb";
+import { updateQuestionsSolved } from '../api_3/scrape';
+
 const { createHash } = require('node:crypto');
 
 export default async function handler(req, res) {
@@ -18,6 +20,9 @@ export default async function handler(req, res) {
     if (guess_hash == user.Password) {
       const cookies = new Cookies(req, res)
       cookies.set('username', username)
+
+      await updateQuestionsSolved();
+
       res.redirect("/")
     } else {
       res.redirect("/login?msg=Incorrect username or password")
