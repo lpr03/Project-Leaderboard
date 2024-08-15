@@ -5,6 +5,7 @@ import { updateQuestionsSolved } from '../api_3/scrape';
 const { createHash } = require('node:crypto');
 export default async function handler(req, res) {
   if (req.method == "POST") {
+    const email = req.body['email']
     const username = req.body['username']
     const password = req.body['password']
     const passwordagain = req.body['passwordagain']
@@ -26,12 +27,15 @@ export default async function handler(req, res) {
     const password_hash = createHash('sha256').update(password).digest('hex');
     const currentDate = new Date().toUTCString();
     const bodyObject = {
+      Email: email,
       Username: username,
       Password: password_hash,
       Created: currentDate,
       Lt_username: lt_username,
       GFG_username: gfg_username,
-      CC_username: cc_username
+      CC_username: cc_username,
+      resetPasswordToken: null,
+      resetPasswordExpires: null,
     }
     await db.collection("Profiles").insertOne(bodyObject);
     const cookies = new Cookies(req, res)

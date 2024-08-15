@@ -1,6 +1,7 @@
 import Cookies from 'cookies';
 import clientPromise from "../../../lib/mongodb";
 import { updateQuestionsSolved } from '../api_3/scrape';
+//import { fetchLeaderboard } from './leaderboard';
 
 const { createHash } = require('node:crypto');
 
@@ -22,7 +23,8 @@ export default async function handler(req, res) {
       cookies.set('username', username)
 
       await updateQuestionsSolved();
-
+      //await fetchLeaderboard();
+      
       res.redirect("/")
     } else {
       res.redirect("/login?msg=Incorrect username or password")

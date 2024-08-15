@@ -1,8 +1,9 @@
 import Layout from '../components/layout'
 import { getCookie } from 'cookies-next';
-import Link from 'next/link'
+import Link from 'next/link';
+import Leaderboard, { getServerSideProps as getLeaderboardProps } from './leaderboard';
 
-export default function HomePage( {username} ) {
+export default function HomePage( {username, leaderboard} ) {
     return (
         <Layout pageTitle="Home">
         {username ?
@@ -10,6 +11,8 @@ export default function HomePage( {username} ) {
             <h2>Hi {username}!</h2>
             <Link href="/profile">Profile</Link><br/>
             <Link href="/api/logout">Logout</Link>
+            <br />
+            <Leaderboard leaderboard={leaderboard} />
         </>: 
         <>  
             <h1>Log in</h1>
@@ -32,5 +35,13 @@ export async function getServerSideProps(context) {
     if (username == undefined){
         username = false;
     }
-    return { props: {username} };
+    //return { props: {username} };
+    const leaderboardProps = await getLeaderboardProps(context);
+
+    return {
+        props: {
+            username,
+            ...leaderboardProps.props, // This spreads the leaderboard data into the props
+        },
+    };
 };

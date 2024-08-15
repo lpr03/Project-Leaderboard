@@ -3,7 +3,7 @@ const { MongoClient } = require('mongodb');
 const axios = require('axios');
 const cheerio = require('cheerio');
 
-const url = "mongodb+srv://21p61a05f0:gXRpNoDyWmycGqW6@cluster1.vbaxeyh.mongodb.net/";
+const url = process.env.MONGODB_URI;
 const dbName = 'Users';
 const usersCollectionName = 'Profiles';
 
