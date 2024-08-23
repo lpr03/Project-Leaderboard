@@ -9,7 +9,6 @@ export default function ProfilePage({ username, created }) {
             <Link href="/">Home</Link><br />
             <h2>{username}'s Profile</h2>
             <p>Account created - <strong>{created}</strong></p>
-
         </LayoutAfterLogin>
     );
 }
