@@ -1,5 +1,6 @@
 // pages/leaderboard.js
 import clientPromise from "../../lib/mongodb";
+import LayoutAfterLogin from "../components/LayoutAfterLogin"
 
 export async function getServerSideProps() {
     // const { db } = await clientPromise;
@@ -22,10 +23,35 @@ export async function getServerSideProps() {
 
 const Leaderboard = ({ leaderboard }) => {
     return (
-        <div>
+        //<div>
+        //    <h3>Leaderboard</h3>
+        //    {leaderboard.length > 0 ? (
+        //        <table>
+        //            <thead>
+        //                <tr>
+        //                    <th>Rank</th>
+        //                    <th>Name</th>
+        //                    <th>Score</th>
+        //                </tr>
+        //            </thead>
+        //            <tbody>
+        //                {leaderboard.map(({ rank, name, score }) => (
+        //                    <tr key={rank}>
+        //                        <td>{rank}</td>
+        //                        <td>{name}</td>
+        //                        <td>{score}</td>
+        //                    </tr>
+        //                ))}
+        //            </tbody>
+        //        </table>
+        //    ) : (
+        //        <p>No data available.</p>
+        //    )}
+        //    </div>
+        <div className="container">
             <h3>Leaderboard</h3>
             {leaderboard.length > 0 ? (
-                <table>
+                <table className="table">
                     <thead>
                         <tr>
                             <th>Rank</th>
@@ -35,7 +61,7 @@ const Leaderboard = ({ leaderboard }) => {
                     </thead>
                     <tbody>
                         {leaderboard.map(({ rank, name, score }) => (
-                            <tr key={rank}>
+                            <tr key={rank} className={rank % 2 === 0 ? "evenRow" : "oddRow"}>
                                 <td>{rank}</td>
                                 <td>{name}</td>
                                 <td>{score}</td>

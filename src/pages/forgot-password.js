@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import LayoutBeforeLogin from '../components/LayoutBeforeLogin';
 
 const ForgotPasswordPage = () => {
     const [email, setEmail] = useState('');
@@ -18,16 +19,22 @@ const ForgotPasswordPage = () => {
     };
 
     return (
-        <div>
-            <h1>Forgot Password</h1>
-            <form onSubmit={handleSubmit}>
-                <label>Email:
-                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-                </label>
-                <button type="submit">Send Reset Link</button>
-            </form>
+        <LayoutBeforeLogin pageTitle="Login">
+        <main class="main-content">
+            <div class="form-container">
+                <h1>Forgot Password</h1>
+                <form onSubmit={handleSubmit}>
+                    <div class="form-group">
+                        <label>Email:
+                            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                        </label>
+                    </div>
+                    <button type="submit">Send Reset Link</button>
+                 </form>
             {message && <p>{message}</p>}
-        </div>
+            </div>
+            </main>
+        </LayoutBeforeLogin>
     );
 };
 

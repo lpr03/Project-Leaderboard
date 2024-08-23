@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
+import LayoutBeforeLogin from "../components/LayoutBeforeLogin";
 
 const ResetPasswordPage = () => {
     const router = useRouter();
@@ -26,16 +27,22 @@ const ResetPasswordPage = () => {
     };
 
     return (
-        <div>
-            <h1>Reset Password</h1>
-            <form onSubmit={handleSubmit}>
-                <label>New Password:
-                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-                </label>
-                <button type="submit">Reset Password</button>
-            </form>
-            {message && <p>{message}</p>}
-        </div>
+        <LayoutBeforeLogin>
+            <main class="main-content">
+                <div class="form-container">
+                    <h1>Reset Password</h1>
+                    <form onSubmit={handleSubmit}>
+                        <div class="form-group">
+                            <label>New Password:
+                                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                            </label>
+                         </div>
+                        <button type="submit">Reset Password</button>
+                    </form>
+                    {message && <p>{message}</p>}
+                </div>
+            </main>
+        </LayoutBeforeLogin>
     );
 };
 

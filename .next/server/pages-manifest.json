@@ -1,8 +1,10 @@
 {
   "/_app": "pages/_app.js",
-  "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/login": "pages/login.js",
+  "/_error": "pages/_error.js",
+  "/profile": "pages/profile.js",
   "/": "pages/index.js",
-  "/forgot-password": "pages/forgot-password.js"
+  "/api/logout": "pages/api/logout.js",
+  "/signup": "pages/signup.js",
+  "/login": "pages/login.js"
 }

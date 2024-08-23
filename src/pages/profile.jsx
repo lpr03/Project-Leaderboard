@@ -1,16 +1,16 @@
-import Layout from '../components/layout'
+import LayoutAfterLogin from '../components/LayoutAfterLogin'
 import { getCookie } from 'cookies-next';
 import Link from 'next/link'
 import clientPromise from "../../lib/mongodb";
 
 export default function ProfilePage({ username, created }) {
     return (
-        <Layout pageTitle="Profile">
+        <LayoutAfterLogin pageTitle="Profile">
             <Link href="/">Home</Link><br />
             <h2>{username}'s Profile</h2>
             <p>Account created - <strong>{created}</strong></p>
 
-        </Layout>
+        </LayoutAfterLogin>
     );
 }
 

@@ -1,47 +1,60 @@
-import Layout from '../components/layout'
 import { getCookie } from 'cookies-next';
 import Link from 'next/link';
 import Leaderboard, { getServerSideProps as getLeaderboardProps } from './leaderboard';
+import LayoutBeforeLogin from '../components/LayoutBeforeLogin';
+import LayoutAfterLogin from '../components/LayoutAfterLogin';
 
-export default function HomePage( {username, leaderboard} ) {
+export default function HomePage({ username, leaderboard }) {
     return (
-        <Layout pageTitle="Home">
-        {username ?
         <>
-            <h2>Hi {username}!</h2>
-            <Link href="/profile">Profile</Link><br/>
-            <Link href="/api/logout">Logout</Link>
-            <br />
-            <Leaderboard leaderboard={leaderboard} />
-        </>: 
-        <>  
-            <h1>Log in</h1>
-            <p>
-            <Link href="/login">Login</Link><br/>
-            </p>
-            <p>
-            <Link href="/signup">Signup</Link>
-            </p>
+            {username ? (
+                <LayoutAfterLogin pageTitle="LeaderBoard">
+                    <h2>Hi {username}!</h2>
+                    <Leaderboard leaderboard={leaderboard} />
+                </LayoutAfterLogin>
+            ) : (
+                <LayoutBeforeLogin pageTitle="Home">
+                        <div class="container">
+                            <div class="block">
+                                <h1>Welcome to CodeMetric</h1>
+                                <p>Your one-stop solution for all your coding metrics needs.</p>
+                            </div>
+                            <div class="block">
+                               {/* <Image src="../../images/slide1.jpg" alt="Example Image" width={500} height={300} />*/}
+                                <p>Our platform provides detailed analytics and insights to help you improve your coding skills.</p>
+                            </div>
+                            <div class="block">
+                                <h2>Feature 1</h2>
+                                <p>Track your progress with our comprehensive dashboard.</p>
+                            </div>
+                            <div class="block">
+                                <h2>Feature 2</h2>
+                                <p>Get personalized recommendations based on your coding habits.</p>
+                            </div>
+                            <div class="block">
+                                <h2>Feature 3</h2>
+                                <p>Join a community of like-minded developers and share your achievements.</p>
+                            </div>
+                        </div>
+                </LayoutBeforeLogin>
+            )}
         </>
-        }
-        </Layout>
     );
 }
 
 export async function getServerSideProps(context) {
-    const req = context.req
-    const res = context.res
+    const req = context.req;
+    const res = context.res;
     var username = getCookie('username', { req, res });
-    if (username == undefined){
+    if (username === undefined) {
         username = false;
     }
-    //return { props: {username} };
     const leaderboardProps = await getLeaderboardProps(context);
 
     return {
         props: {
             username,
-            ...leaderboardProps.props, // This spreads the leaderboard data into the props
+            ...leaderboardProps.props,
         },
     };
-};
+}
