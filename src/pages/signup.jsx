@@ -1,77 +1,117 @@
-import LayoutBeforeLogin from '../components/LayoutBeforeLogin'
+import React, { useState } from 'react';
+import LayoutBeforeLogin from '../components/LayoutBeforeLogin';
 import { getCookie } from 'cookies-next';
-import Link from 'next/link'
 import { useRouter } from 'next/router';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 export default function SignupPage({ username }) {
-    const router = useRouter()
-    const { msg } = router.query
+    const router = useRouter();
+    const { msg } = router.query;
+
+    const [passwordVisible, setPasswordVisible] = useState(false);
+    const [passwordAgainVisible, setPasswordAgainVisible] = useState(false);
+
+    const togglePasswordVisibility = () => {
+        setPasswordVisible(!passwordVisible);
+    };
+
+    const togglePasswordAgainVisibility = () => {
+        setPasswordAgainVisible(!passwordAgainVisible);
+    };
+
     return (
         <LayoutBeforeLogin pageTitle="Signup">
-            {msg ?
-                <h3 className="red">{msg}</h3>
-                :
-                <></>
-            }
-            {/*<h2>Sign up</h2>*/}
-            {/*<form action='/api/signup' method='POST'>*/}
-            {/*    <input name="email" id="email" type="email" placeholder='Username' required></input><br />*/}
-            {/*    <input minLength="3" name="username" id="username" type="text" placeholder='Username' required></input><br />*/}
-            {/*    <input minLength="5" name="password" id="password" type="password" placeholder='Password' required></input><br />*/}
-            {/*    <input minLength="5" name="passwordagain" id="passwordagain" type="password" placeholder='Password' required></input><br />*/}
-            {/*    <input minLength="3" name="lt_username" id="lt_username" type="text" placeholder='Leetcode username' ></input><br />*/}
-            {/*    <input minLength="3" name="gfg_username" id="gfg_username" type="text" placeholder='GeekForGeeks username' ></input><br />*/}
-            {/*    <input minLength="3" name="cc_username" id="cc_username" type="text" placeholder='Codechef username' ></input><br />*/}
-            {/*    */}{/* <input minLength="5" name="passwordagain" id="passwordagain" type="password" placeholder='password again' required></input><br /> */}
-            {/*    <input type="submit" value="Signup" />*/}
-            {/*</form>*/}
-            <main class="main-content">
-                <div class="form-container">
-                    <h2>SignUp</h2>
-                    <form form action='/api/signup' method='POST'>
-                        <div class="form-group">
-                            <input name="email" id="email" type="email" placeholder='Username' required></input>
+            {msg ? <h3 className="red">{msg}</h3> : <></>}
+            <main className="main-content">
+                <div className="form-container">
+                    <h2 style={{textAlign:"center"}}>SignUp</h2>
+                    <form action="/api/signup" method="POST">
+                        <div className="form-group">
+                            <input name="email" id="email" type="email" placeholder="Email" required />
                         </div>
-                        <div class="form-group">
-                            <input minLength="3" name="username" id="username" type="text" placeholder='Username' required></input>
+                        <div className="form-group">
+                            <input minLength="3" name="username" id="username" type="text" placeholder="Username" required />
                         </div>
-                        <div class="form-group">
-                            <input minLength="5" name="password" id="password" type="password" placeholder='Password' required></input>
+                        <div className="password-container form-group" style={{ position: 'relative' }}>
+                            <input
+                                type={passwordVisible ? 'text' : 'password'}
+                                id="password"
+                                className="password-input"
+                                name="password"
+                                pattern="^[a-zA-Z0-9@#$%&]{5,}$"
+                                placeholder="Password"
+                                title="Password must be at least 8 characters long, include at least one uppercase letter, one lowercase letter, number and special character."
+                                required
+                            />
+                            <span
+                                onClick={togglePasswordVisibility}
+                                style={{
+                                    position: 'absolute',
+                                    right: '10px',
+                                    top: '50%',
+                                    transform: 'translateY(-50%)',
+                                    cursor: 'pointer',
+                                    width: '18px',
+                                }}
+                            >
+                                <FontAwesomeIcon icon={passwordVisible ? faEyeSlash : faEye} />
+                            </span>
                         </div>
-                        <div class="form-group">
-                            <input minLength="5" name="passwordagain" id="passwordagain" type="password" placeholder='Password' required></input>
+                        <div className="password-container form-group" style={{ position: 'relative' }}>
+                            <input
+                                type={passwordAgainVisible ? 'text' : 'password'}
+                                id="passwordagain"
+                                name="passwordagain"
+                                pattern="^[a-zA-Z0-9@#$%&]{5,}$"
+                                placeholder="Password Again"
+                                title="Password must be at least 8 characters long, include at least one uppercase letter, one lowercase letter, number and special character."
+                                required
+                            />
+                            <span
+                                onClick={togglePasswordAgainVisibility}
+                                style={{
+                                    position: 'absolute',
+                                    right: '10px',
+                                    top: '50%',
+                                    transform: 'translateY(-50%)',
+                                    cursor: 'pointer',
+                                    width: '18px',
+                                }}
+                            >
+                                <FontAwesomeIcon icon={passwordAgainVisible ? faEyeSlash : faEye} />
+                            </span>
                         </div>
-                        <div class="form-group">
-                            <input minLength="3" name="lt_username" id="lt_username" type="text" placeholder='Leetcode username' ></input>
+                        <div className="form-group">
+                            <input minLength="3" name="lt_username" id="lt_username" type="text" placeholder="Leetcode username" />
                         </div>
-                        <div class="form-group">
-                            <input minLength="3" name="gfg_username" id="gfg_username" type="text" placeholder='GeekForGeeks username' ></input>
+                        <div className="form-group">
+                            <input minLength="3" name="gfg_username" id="gfg_username" type="text" placeholder="GeekForGeeks username" />
                         </div>
-                        <div class="form-group">
-                            <input minLength="3" name="cc_username" id="cc_username" type="text" placeholder='Codechef username' ></input>
+                        <div className="form-group">
+                            <input minLength="3" name="cc_username" id="cc_username" type="text" placeholder="Codechef username" />
                         </div>
-                        <div class="form-group">
+                        <div className="form-group">
                             <button type="submit">Sign Up</button>
                         </div>
                     </form>
                 </div>
             </main>
-
         </LayoutBeforeLogin>
     );
 }
 
 export async function getServerSideProps(context) {
-    const req = context.req
-    const res = context.res
+    const req = context.req;
+    const res = context.res;
     var username = getCookie('username', { req, res });
     if (username != undefined) {
         return {
             redirect: {
                 permanent: false,
-                destination: "/"
-            }
-        }
+                destination: "/",
+            },
+        };
     }
     return { props: { username: false } };
-};
+}

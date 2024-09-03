@@ -4,11 +4,32 @@ import Link from 'next/link'
 import clientPromise from "../../lib/mongodb";
 
 export default function ProfilePage({ username, created }) {
+     // Replace with the UTC date from your database
+    const utcDate = new Date(created); 
+    const options = { 
+      timeZone: 'Asia/Kolkata', 
+      weekday: 'long',    // For the full day name (e.g., "Monday")
+      year: 'numeric', 
+      month: 'long',      // For the full month name (e.g., "August")
+      day: 'numeric', 
+      hour: 'numeric', 
+      minute: 'numeric', 
+      second: 'numeric' 
+    };
+    const isDate = utcDate.toLocaleString('en-GB', options);
     return (
         <LayoutAfterLogin pageTitle="Profile">
-            <Link href="/">Home</Link><br />
+            <button className='btn'>
+            <Link 
+                     style={{
+                        color: 'white',
+                        textDecoration: 'none',
+
+                    }}
+            href="/">Home</Link><br />
+            </button>
             <h2>{username}'s Profile</h2>
-            <p>Account created - <strong>{created}</strong></p>
+            <p>Account created - <strong>{isDate}</strong></p>
         </LayoutAfterLogin>
     );
 }
