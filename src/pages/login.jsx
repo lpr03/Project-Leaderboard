@@ -40,7 +40,7 @@ export default function LoginPage({ username }) {
                                 id="password"
                                 className="password-input"
                                 name="password"
-                                pattern="^[a-zA-Z0-9@#$%&]{5,}$"
+                                //pattern="^[a-zA-Z0-9@#$%&]{5,}$"
                                 placeholder="Password"
                                 title="Password must be at least 8 characters long, include at least one uppercase letter, one lowercase letter, number and special character."
                                 required
