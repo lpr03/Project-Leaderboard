@@ -1,6 +1,6 @@
 import Cookies from 'cookies'
 import clientPromise from "../../../lib/mongodb";
-import { updateQuestionsSolved } from '../api_3/scrape';
+import { updateQuestionsSolved } from './scrape';
 
 const { createHash } = require('node:crypto');
 export default async function handler(req, res) {

@@ -6,11 +6,11 @@ import Link from 'next/link';
 export default function HeaderBeforeLogin({ onLogoClick }) {
     
     return (
-        <header class="header">
-            <div class="logo" onClick={onLogoClick} style={{ cursor: 'pointer' }}>
+        <header className="header">
+            <div className="logo" onClick={onLogoClick} style={{ cursor: 'pointer' }}>
                 <h1>CodeMetric</h1>
             </div>
-            <div class="buttons">
+            <div className="buttons">
                 <Link href="/login">
                     <button>Login</button>
                 </Link>
