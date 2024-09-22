@@ -146,11 +146,10 @@ async function scrapeQuestionsSolved(url, selector) {
             const d = $(selector).last().text().trim();
             return parseInt(d.match(/\d+/)[0]);
         } catch (error) {
-            console.error(`Error fetching data from ${url}:`, error.message);
+            //console.error(`Error fetching data from ${url}:`, error.message);
             return null;
         }
     }
-
 async function gfgScrapeQuestionsSolved(url, selector) {
     let myList = [];
     try {
@@ -165,7 +164,7 @@ async function gfgScrapeQuestionsSolved(url, selector) {
         }
         return myList;
     } catch (error) {
-        console.error(`Error fetching data from ${url}:`, error.message);
+        //console.error(`Error fetching data from ${url}:`, error.message);
         return null;
     }
 }
@@ -183,12 +182,12 @@ async function fetchLeetCodeSolved(username) {
         myList.push(easy, medium, hard);
         return myList;
     } catch (error) {
-        console.error(`Error fetching data from LeetCode for user ${username}:`, error.message);
+        //console.error(`Error fetching data from LeetCode for user ${username}:`, error.message);
         return null;
     }
 }
 
-async function updateQuestionsSolved() {
+export async function updateQuestionsSolved() {
     const client = new MongoClient(url);
     const maxRetries = 3;
     const retryDelay = 5000; // 5 seconds
@@ -247,7 +246,7 @@ async function updateQuestionsSolved() {
                 if (isNaN(gfg_norm)) {
                     gfg_norm = 0;
                 }
-                const cc_norm = 2.5 * codechefSolved;
+                const cc_norm =codechefSolved;
 
                 let total_norm = 0;
 
@@ -298,5 +297,7 @@ async function updateQuestionsSolved() {
         await client.close();
     }
 }
+
+//setInterval(updateQuestionsSolved,600000000);
 
 updateQuestionsSolved().catch(console.error);

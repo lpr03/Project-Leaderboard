@@ -36,7 +36,7 @@
 
 import Cookies from 'cookies';
 import clientPromise from '../../../lib/mongodb';
-import { updateQuestionsSolved } from './scrape';
+// import { updateQuestionsSolved } from './scrape';
 import { createHash } from 'node:crypto';
 
 export default async function handler(req, res) {
@@ -60,7 +60,7 @@ export default async function handler(req, res) {
         const cookies = new Cookies(req, res, { secure: true, httpOnly: true });
         cookies.set('username', username);
 
-        await updateQuestionsSolved();
+        // await updateQuestionsSolved();
         res.redirect('/');
       } else {
         res.redirect('/login?msg=Incorrect username or password');
