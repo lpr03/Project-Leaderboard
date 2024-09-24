@@ -1,6 +1,5 @@
 // pages/index.jsx
 import { getCookie } from 'cookies-next';
-import { getServerSideProps as getLeaderboardProps } from './leaderboard';
 import LayoutBeforeLogin from '../components/LayoutBeforeLogin';
 import LayoutAfterLogin from '../components/LayoutAfterLogin';
 
@@ -10,31 +9,31 @@ export default function HomePage({ username, leaderboard }) {
             {username ? (
                 <LayoutAfterLogin pageTitle="LeaderBoard">
                     <h2>Hi {username}!</h2>
-                        <div className="container">
-                            <h3>Leaderboard</h3>
-                            {leaderboard.length > 0 ? (
-                                <table className="table">
-                                    <thead>
-                                        <tr>
-                                            <th>Rank</th>
-                                            <th>Name</th>
-                                            <th>Score</th>
+                    <div className="container">
+                        <h3>Leaderboard</h3>
+                        {leaderboard && leaderboard.length > 0 ? (
+                            <table className="table">
+                                <thead>
+                                    <tr>
+                                        <th>Rank</th>
+                                        <th>Name</th>
+                                        <th>Score</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {leaderboard.slice(0, 5).map(({ rank, name, score, isCurrentUser }) => (
+                                        <tr key={rank} className={isCurrentUser ? "currentUserRow" : (rank % 2 === 0 ? "evenRow" : "oddRow")}>
+                                            <td>{rank}</td>
+                                            <td>{name}</td>
+                                            <td>{score !== null ? score : 'N/A'}</td>
                                         </tr>
-                                    </thead>
-                                    <tbody>
-                                        {leaderboard.slice(0, 5).map(({ rank, name, score, isCurrentUser }) => (
-                                            <tr key={rank} className={isCurrentUser ? "currentUserRow":(rank % 2 === 0 ? "evenRow" : "oddRow")}>
-                                                <td>{rank}</td>
-                                                <td>{name}</td>
-                                                <td>{score}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            ) : (
-                                <p>No data available.</p>
-                            )}
-                        </div>
+                                    ))}
+                                </tbody>
+                            </table>
+                        ) : (
+                            <p>No data available.</p>
+                        )}
+                    </div>
                 </LayoutAfterLogin>
             ) : (
                 <LayoutBeforeLogin pageTitle="Home">
@@ -69,17 +68,31 @@ export async function getServerSideProps(context) {
     const req = context.req;
     const res = context.res;
 
+    // Get username from cookie
     let username = getCookie('username', { req, res });
     if (!username) {
         username = false;
+        // No username, no need to fetch leaderboard props
+        return {
+            props: {
+                username,
+            },
+        };
     }
 
-    const leaderboardProps = await getLeaderboardProps(context);
+    // Fetch leaderboard props only if username exists
+    const { props: leaderboardProps } = await import('./leaderboard').then(mod => mod.getServerSideProps(context));
+
+    // Sanitize leaderboard data by replacing undefined scores with null
+    const sanitizedLeaderboard = leaderboardProps.leaderboard.map(entry => ({
+        ...entry,
+        score: entry.score === undefined ? null : entry.score,
+    }));
 
     return {
         props: {
             username,
-            ...leaderboardProps.props, // This includes the leaderboard data
+            leaderboard: sanitizedLeaderboard, // Pass sanitized leaderboard
         },
     };
 }
