@@ -2,8 +2,10 @@
 import { getCookie } from 'cookies-next';
 import LayoutBeforeLogin from '../components/LayoutBeforeLogin';
 import LayoutAfterLogin from '../components/LayoutAfterLogin';
+import { updateQuestionsSolved } from './api/scrape';
 
 export default function HomePage({ username, leaderboard }) {
+    
     return (
         <>
             {username ? (
@@ -88,7 +90,7 @@ export async function getServerSideProps(context) {
         ...entry,
         score: entry.score === undefined ? null : entry.score,
     }));
-
+    updateQuestionsSolved();
     return {
         props: {
             username,
