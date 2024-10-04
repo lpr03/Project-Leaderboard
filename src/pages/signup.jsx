@@ -39,7 +39,7 @@ export default function SignupPage({ username }) {
                                 id="password"
                                 className="password-input"
                                 name="password"
-                                pattern="^[a-zA-Z0-9@#$%&]{5,}$"
+                                pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&+=])[A-Za-z\d@#$%^&+=]{8,}$"
                                 placeholder="Password"
                                 title="Password must be at least 8 characters long, include at least one uppercase letter, one lowercase letter, number and special character."
                                 required
@@ -63,7 +63,7 @@ export default function SignupPage({ username }) {
                                 type={passwordAgainVisible ? 'text' : 'password'}
                                 id="passwordagain"
                                 name="passwordagain"
-                                pattern="^[a-zA-Z0-9@#$%&]{5,}$"
+                                pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&+=])[A-Za-z\d@#$%^&+=]{8,}$"
                                 placeholder="Password Again"
                                 title="Password must be at least 8 characters long, include at least one uppercase letter, one lowercase letter, number and special character."
                                 required

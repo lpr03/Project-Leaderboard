@@ -9,7 +9,7 @@ const usersCollectionName = 'Profiles';
 // Helper function to delay execution
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-async function scrapeQuestionsSolved(url, selector) {
+async function ccscrapeQuestionsSolved(url, selector) {
     try {
         const res = await axios.get(url);
         const $ = cheerio.load(res.data);
@@ -81,7 +81,7 @@ export async function updateQuestionsSolved() {
                 // CodeChef
                 for (let attempt = 0; attempt < maxRetries; attempt++) {
                     try {
-                        codechefSolved = await scrapeQuestionsSolved(codechefUrl, '.rating-data-section.problems-solved h3');
+                        codechefSolved = await ccscrapeQuestionsSolved(codechefUrl, '.rating-data-section.problems-solved h3');
                         break;
                     } catch (error) {
                         if (attempt === maxRetries - 1) throw error;
@@ -120,13 +120,7 @@ export async function updateQuestionsSolved() {
 
                 // Calculate total normalized score
                 let total_norm = 0;
-                if (user.Lt_username && user.GFG_username && user.CC_username) {
-                    total_norm = (cc_norm + lc_norm + gfg_norm) / 3;
-                } else if ((user.Lt_username && user.GFG_username) || (user.GFG_username && user.CC_username) || (user.CC_username && user.Lt_username)) {
-                    total_norm = (cc_norm + lc_norm + gfg_norm) / 2;
-                } else if (user.Lt_username || user.GFG_username || user.CC_username) {
-                    total_norm = cc_norm + lc_norm + gfg_norm;
-                }
+                total_norm = cc_norm + lc_norm + gfg_norm;
 
                 const newValues = {
                     cc: codechefSolved,
