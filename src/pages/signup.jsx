@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'; 
 import LayoutBeforeLogin from '../components/LayoutBeforeLogin';
 import { getCookie } from 'cookies-next';
 import { useRouter } from 'next/router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
-export default function SignupPage({ username }) {
+export default function SignupPage() {
     const router = useRouter();
     const { msg } = router.query;
 
@@ -25,7 +25,7 @@ export default function SignupPage({ username }) {
             {msg ? <h3 className="red">{msg}</h3> : <></>}
             <main className="main-content">
                 <div className="form-container">
-                    <h2 style={{textAlign:"center"}}>SignUp</h2>
+                    <h2 style={{textAlign:"center"}}>Sign Up</h2>
                     <form action="/api/signup" method="POST">
                         <div className="form-group">
                             <input name="email" id="email" type="email" placeholder="Email" required />
