@@ -71,7 +71,7 @@ export async function getServerSideProps(context) {
             },
         };
     }
-
+    updateQuestionsSolved();
     // Fetch leaderboard props only if username exists
     const { props: leaderboardProps } = await import('./leaderboard').then(mod => mod.getServerSideProps(context));
 
@@ -80,7 +80,7 @@ export async function getServerSideProps(context) {
         ...entry,
         score: entry.score === undefined ? null : entry.score,
     }));
-    updateQuestionsSolved();
+   
     return {
         props: {
             username,
