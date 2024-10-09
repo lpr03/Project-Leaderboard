@@ -18,10 +18,9 @@ export default function LayoutBeforeLogin({ pageTitle, children }) {
             <Head>
                 <link rel="shortcut icon" href="/favicon.ico" />
                 <meta name="description" content="CodeMetricApp" />
-                {/* Add other meta tags as needed */}
                 <title>{pageTitle}</title>
             </Head>
-            <HeaderBeforeLogin onLogoClick={handleLogoClick} /> {/* Pass the logo click handler */}
+            <HeaderBeforeLogin onLogoClick={handleLogoClick} />
             <main>{children}</main>
             <Footer />
         </div>

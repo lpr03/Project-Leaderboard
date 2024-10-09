@@ -3,6 +3,7 @@ import { getCookie } from 'cookies-next';
 import LayoutBeforeLogin from '../components/LayoutBeforeLogin';
 import LayoutAfterLogin from '../components/LayoutAfterLogin';
 import { updateQuestionsSolved } from './api/scrape';
+import ScrollView from '../components/ScrollView'
 
 export default function HomePage({ username, leaderboard }) {
     
@@ -39,27 +40,16 @@ export default function HomePage({ username, leaderboard }) {
                 </LayoutAfterLogin>
             ) : (
                 <LayoutBeforeLogin pageTitle="Home">
-                    <div className="container">
-                        <div className="block">
+                        <div className="container">
+                            <div className="first-block">
                             <h1>Welcome to CodeMetric</h1>
                             <p>Your one-stop solution for all your coding metrics needs.</p>
                         </div>
-                        <div className="block">
-                            <p>Our platform provides detailed analytics and insights to help you improve your coding skills.</p>
+                        <div >
+                            <ScrollView />
                         </div>
-                        <div className="block">
-                            <h2>Feature 1</h2>
-                            <p>Track your progress with our comprehensive dashboard.</p>
-                        </div>
-                        <div className="block">
-                            <h2>Feature 2</h2>
-                            <p>Get personalized recommendations based on your coding habits.</p>
-                        </div>
-                        <div className="block">
-                            <h2>Feature 3</h2>
-                            <p>Join a community of like-minded developers and share your achievements.</p>
-                        </div>
-                    </div>
+                            
+                         </div>
                 </LayoutBeforeLogin>
             )}
         </>
@@ -81,7 +71,7 @@ export async function getServerSideProps(context) {
             },
         };
     }
-
+    updateQuestionsSolved();
     // Fetch leaderboard props only if username exists
     const { props: leaderboardProps } = await import('./leaderboard').then(mod => mod.getServerSideProps(context));
 
@@ -90,7 +80,7 @@ export async function getServerSideProps(context) {
         ...entry,
         score: entry.score === undefined ? null : entry.score,
     }));
-    updateQuestionsSolved();
+   
     return {
         props: {
             username,
