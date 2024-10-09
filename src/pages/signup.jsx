@@ -1,11 +1,11 @@
-import React, { useState } from 'react'; 
+import React, { useState } from 'react';
 import LayoutBeforeLogin from '../components/LayoutBeforeLogin';
 import { getCookie } from 'cookies-next';
 import { useRouter } from 'next/router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
-export default function SignupPage() {
+export default function SignupPage({ username }) {
     const router = useRouter();
     const { msg } = router.query;
 
@@ -25,7 +25,7 @@ export default function SignupPage() {
             {msg ? <h3 className="red">{msg}</h3> : <></>}
             <main className="main-content">
                 <div className="form-container">
-                    <h2 style={{textAlign:"center"}}>Sign Up</h2>
+                    <h2 style={{ textAlign: "center" }}>SignUp</h2>
                     <form action="/api/signup" method="POST">
                         <div className="form-group">
                             <input name="email" id="email" type="email" placeholder="Email" required />
@@ -39,7 +39,7 @@ export default function SignupPage() {
                                 id="password"
                                 className="password-input"
                                 name="password"
-                                pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&+=])[A-Za-z\d@#$%^&+=]{8,}$"
+                                pattern="^[a-zA-Z0-9@#$%&]{5,}$"
                                 placeholder="Password"
                                 title="Password must be at least 8 characters long, include at least one uppercase letter, one lowercase letter, number and special character."
                                 required
@@ -63,7 +63,7 @@ export default function SignupPage() {
                                 type={passwordAgainVisible ? 'text' : 'password'}
                                 id="passwordagain"
                                 name="passwordagain"
-                                pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&+=])[A-Za-z\d@#$%^&+=]{8,}$"
+                                pattern="^[a-zA-Z0-9@#$%&]{5,}$"
                                 placeholder="Password Again"
                                 title="Password must be at least 8 characters long, include at least one uppercase letter, one lowercase letter, number and special character."
                                 required
@@ -81,6 +81,18 @@ export default function SignupPage() {
                             >
                                 <FontAwesomeIcon icon={passwordAgainVisible ? faEyeSlash : faEye} />
                             </span>
+                        </div>
+                        <div className="select">
+                            <select name="college" id="college">
+                                <option defaultChecked>Select your College</option>
+                                <option value="Vignana Bharathi Institute of Technology">Vignana Bharathi Institute of Technology</option>
+                                <option value="Anurag University">Anurag University</option>
+                                <option value="Nalla Malla Reddy Engineering College">Nalla Malla Reddy Engineering College</option>
+                                <option value="Nalla Narasimha Reddy College of Engineering">Nalla Narasimha Reddy College of Engineering</option>
+                                <option value="ACE Engineering College">ACE Engineering College</option>
+                                <option value="Sreenidhi Institute of Science Technology">Sreenidhi Institute of Science Technology</option>
+                                <option value="Megha Institute of Engineering and Technology for Women">Megha Institute of Engineering and Technology for Women</option>
+                            </select>
                         </div>
                         <div className="form-group">
                             <input minLength="3" name="lt_username" id="lt_username" type="text" placeholder="Leetcode username" />

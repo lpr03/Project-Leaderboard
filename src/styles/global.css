@@ -30,7 +30,9 @@
  /*Input fields (text boxes)*/
  .form-container input[type="text"],
  .form-container input[type="password"],
- .form-container input[type="email"] {
+ .form-container input[type="email"],
+ .form-container select
+ {
      width: 100%;
      padding: 10px;
      margin: 10px 0;
@@ -39,9 +41,7 @@
      /* Rounded corners for text boxes*/
      box-sizing: border-box;
  }
-
- /* New Styles */
-
+ 
  /* Password container */
  .password-container {
      position: relative;

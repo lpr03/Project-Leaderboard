@@ -9,58 +9,63 @@ const usersCollectionName = 'Profiles';
 // Helper function to delay execution
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
+// Function to scrape CodeChef questions solved
 async function ccscrapeQuestionsSolved(url, selector) {
     try {
-        const res = await axios.get(url);
+        const res = await axios.get(url, {
+            headers: { 'User-Agent': 'Mozilla/5.0' }
+        });
         const $ = cheerio.load(res.data);
         const d = $(selector).last().text().trim();
         const parsedValue = parseInt(d.match(/\d+/)?.[0]);
-        return isNaN(parsedValue) ? 0 : parsedValue; // Return 0 if undefined or NaN
+        return isNaN(parsedValue) ? null : parsedValue;
     } catch (error) {
-        return 0; // Return 0 if there's an error
+        console.error(`Error scraping CodeChef data: ${error.message}`);
+        return null; // Return null if there's an error
     }
 }
 
-async function gfgScrapeQuestionsSolved(url, selector) {
-    let myList = [];
-    try {
-        const res = await axios.get(url);
-        const $ = cheerio.load(res.data);
-        const d = $(selector).text();
-        let matches = d.match(/\d+/g);
-        if (matches) {
-            matches.forEach((num) => {
-                const parsedNum = parseInt(num, 10);
-                myList.push(isNaN(parsedNum) ? 0 : parsedNum); // Handle undefined or NaN
-            });
-        }
-        return myList.length > 0 ? myList : [0, 0, 0, 0, 0]; // Default array if no matches
-    } catch (error) {
-        return [0, 0, 0, 0, 0]; // Default array on error
-    }
-}
-
+// Function to fetch LeetCode solved questions
 async function fetchLeetCodeSolved(username) {
-    let myList = [];
     try {
         const url = `https://leetcode-stats-api.herokuapp.com/${username}`;
         const res = await axios.get(url);
-
-        let easy = parseInt(res.data.easySolved);
-        let medium = parseInt(res.data.mediumSolved);
-        let hard = parseInt(res.data.hardSolved);
-
-        myList.push(isNaN(easy) ? 0 : easy, isNaN(medium) ? 0 : medium, isNaN(hard) ? 0 : hard);
-        return myList;
+        return [
+            parseInt(res.data.easySolved) || null,
+            parseInt(res.data.mediumSolved) || null,
+            parseInt(res.data.hardSolved) || null
+        ];
     } catch (error) {
-        return [0, 0, 0]; // Return default array on error
+        console.error(`Error fetching LeetCode data for ${username}: ${error.message}`);
+        return [null, null, null]; // Return null array if there's an error
     }
 }
 
+// Function to scrape GeeksforGeeks questions solved
+async function gfgScrapeQuestionsSolved(url, selector) {
+    try {
+        const res = await axios.get(url, {
+            headers: { 'User-Agent': 'Mozilla/5.0' }
+        });
+        const $ = cheerio.load(res.data);
+        const d = $(selector).text();
+        let matches = d.match(/\d+/g);
+        return matches ?
+            matches.map(num => {
+                const parsed = parseInt(num, 10); // Parse the number
+                return isNaN(parsed) ? null : parsed; // Return null if NaN, otherwise return parsed value
+            })
+            : [null, null, null, null, null];
+    } catch (error) {
+        console.error(`Error scraping GFG data: ${error.message}`);
+        return [null, null, null, null, null]; // Return null array if there's an error
+    }
+}
+
+// Function to update questions solved for all users
 export async function updateQuestionsSolved() {
     const client = new MongoClient(url);
-    const maxRetries = 3;
-    const retryDelay = 5000; // 5 seconds
+    const batchSize = 10;
 
     try {
         await client.connect();
@@ -68,88 +73,101 @@ export async function updateQuestionsSolved() {
         const usersCollection = db.collection(usersCollectionName);
 
         const users = await usersCollection.find().toArray();
-        let i = 0;
+        let successCount = 0;
+        let errorCount = 0;
+        const updates = [];
 
-        for (const user of users) {
-            try {
-                const codechefUrl = `https://www.codechef.com/users/${user.CC_username}`;
-                const leetcodeUsername = user.Lt_username;
-                const gfgUsernameUrl = `https://www.geeksforgeeks.org/user/${user.GFG_username}`;
+        for (let i = 0; i < users.length; i += batchSize) {
+            const batch = users.slice(i, i + batchSize);
 
-                let codechefSolved, leetcodeSolved, gfgSolved;
-
-                // CodeChef
-                for (let attempt = 0; attempt < maxRetries; attempt++) {
+            await Promise.all(
+                batch.map(async (user) => {
                     try {
-                        codechefSolved = await ccscrapeQuestionsSolved(codechefUrl, '.rating-data-section.problems-solved h3');
-                        break;
+                        const existingUser = await usersCollection.findOne({ _id: user._id });
+                        if (!existingUser) {
+                            console.error(`User ${user._id} not found in the database.`);
+                            errorCount++;
+                            return;
+                        }
+
+                        let codechefSolved = null;
+                        let leetcodeSolved = [null, null, null];
+                        let gfgSolved = [null, null, null, null, null];
+
+                        // Only scrape CodeChef if the username exists
+                        if (user.CC_username) {
+                            const codechefUrl = `https://www.codechef.com/users/${user.CC_username}`;
+                            codechefSolved = await ccscrapeQuestionsSolved(codechefUrl, '.rating-data-section.problems-solved h3');
+                            await delay(2000); // Rate limiting
+                        }
+
+                        // Only scrape LeetCode if the username exists
+                        if (user.Lt_username) {
+                            leetcodeSolved = await fetchLeetCodeSolved(user.Lt_username);
+                            await delay(2000); // Rate limiting
+                        }
+
+                        // Only scrape GeeksforGeeks if the username exists
+                        if (user.GFG_username) {
+                            const gfgUsernameUrl = `https://www.geeksforgeeks.org/user/${user.GFG_username}`;
+                            gfgSolved = await gfgScrapeQuestionsSolved(gfgUsernameUrl, '#comp > div.AuthLayout_outer_div__20rxz > div > div.AuthLayout_head_content__ql3r2 > div > div > div.solvedProblemContainer_head__ZyIn0 > div.solvedProblemSection_head__VEUg4 > div.problemNavbar_head__cKSRi');
+                        }
+
+                        // Use existing values if scraping fails and ensure null values are set to zero
+                        const cc_norm = codechefSolved !== null ? codechefSolved : existingUser.cc || 0;
+
+                        // LeetCode normalization logic
+                        const lc_norm = Array.isArray(leetcodeSolved) && leetcodeSolved.some(val => val !== null)
+                            ? 2 * (leetcodeSolved[0] ?? (existingUser.lc[0] || 0)) + 
+                              3 * (leetcodeSolved[1] ?? (existingUser.lc[1] || 0)) + 
+                              4 * (leetcodeSolved[2] ?? (existingUser.lc[2] || 0))
+                            : existingUser.lcs || 0;
+
+                        // GeeksforGeeks normalization logic
+                        const gfg_norm = Array.isArray(gfgSolved) && gfgSolved.some(val => val !== null)
+                            ? 0.5 * (gfgSolved[0] ?? (existingUser.gfg[0] || 0) )+ 
+                              1 * (gfgSolved[1] ?? (existingUser.gfg[1] || 0))+ 
+                              2 * (gfgSolved[2] ?? (existingUser.gfg[2] || 0))+ 
+                              3 * (gfgSolved[3] ?? (existingUser.gfg[3] || 0)) + 
+                              4 * (gfgSolved[4] ?? (existingUser.gfg[4] || 0))
+                            : existingUser.gfgs || 0;
+
+                        const total_norm = cc_norm + lc_norm + gfg_norm;
+
+                        const newValues = {
+                            cc: codechefSolved !== null ? codechefSolved : existingUser.cc || 0,
+                            ccs: cc_norm,
+                            lc: leetcodeSolved.some(val => val !== null) ? leetcodeSolved : existingUser.lc || [0, 0, 0],
+                            lcs: lc_norm,
+                            gfg: gfgSolved.some(val => val !== null) ? gfgSolved : existingUser.gfg || [0, 0, 0, 0, 0],
+                            gfgs: gfg_norm,
+                            t_norm: total_norm,
+                        };
+
+                        updates.push({
+                            updateOne: {
+                                filter: { _id: user._id },
+                                update: { $set: newValues },
+                            },
+                        });
+
+                        successCount++;
                     } catch (error) {
-                        if (attempt === maxRetries - 1) throw error;
-                        await delay(retryDelay);
+                        console.error(`Error processing user ${user._id}: ${error.message}`);
+                        errorCount++;
                     }
-                }
+                })
+            );
+        }
 
-                // LeetCode
-                for (let attempt = 0; attempt < maxRetries; attempt++) {
-                    try {
-                        leetcodeSolved = await fetchLeetCodeSolved(leetcodeUsername);
-                        break;
-                    } catch (error) {
-                        if (attempt === maxRetries - 1) throw error;
-                        await delay(retryDelay);
-                    }
-                }
+        // Perform the bulk update after processing all users
+        if (updates.length > 0) {
+            await usersCollection.bulkWrite(updates);
+            console.log(`Bulk update completed for ${successCount} users.`);
+        }
 
-                // GeeksforGeeks
-                for (let attempt = 0; attempt < maxRetries; attempt++) {
-                    try {
-                        gfgSolved = await gfgScrapeQuestionsSolved(gfgUsernameUrl, '.problemNavbar_head__cKSRi');
-                        break;
-                    } catch (error) {
-                        if (attempt === maxRetries - 1) throw error;
-                        await delay(retryDelay);
-                    }
-                }
-
-                // Calculate normalized scores
-                const lc_norm = 2 * leetcodeSolved[0] + 3 * leetcodeSolved[1] + 4 * leetcodeSolved[2];
-                let gfg_norm = 0.5 * gfgSolved[0] + 1 * gfgSolved[1] + 2 * gfgSolved[2] + 3 * gfgSolved[3] + 4 * gfgSolved[4];
-
-                gfg_norm = isNaN(gfg_norm) ? 0 : gfg_norm;
-                const cc_norm = codechefSolved || 0;
-
-                // Calculate total normalized score
-                let total_norm = 0;
-                total_norm = cc_norm + lc_norm + gfg_norm;
-
-                const newValues = {
-                    cc: codechefSolved,
-                    ccs: cc_norm,
-                    lc: leetcodeSolved,
-                    lcs: lc_norm,
-                    gfg: gfgSolved,
-                    gfgs: gfg_norm,
-                    t_norm: total_norm
-                };
-
-                const currentUser = await usersCollection.findOne({ _id: user._id });
-
-                const hasChanges = Object.keys(newValues).some(key => JSON.stringify(currentUser[key]) !== JSON.stringify(newValues[key]));
-
-                if (hasChanges) {
-                    await usersCollection.updateOne({ _id: user._id }, {
-                        $set: newValues
-                    });
-                    console.log(`Updated user ${user._id}`);
-                } else {
-                    console.log(`No changes for user ${user._id}`);
-                }
-
-                i++;
-                await delay(1000);
-            } catch (error) {
-                console.error(`Error processing user ${user._id}:`, error.message);
-            }
+        if (errorCount > 0) {
+            console.log(`There were ${errorCount} errors during processing.`);
         }
     } finally {
         await client.close();

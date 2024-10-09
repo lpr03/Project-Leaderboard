@@ -1,25 +1,54 @@
 import Cookies from 'cookies';
 import clientPromise from "../../../lib/mongodb";
 import { updateQuestionsSolved } from './scrape';
-const { createHash } = require('node:crypto');
+import { createHash } from 'node:crypto';
 
 export default async function handler(req, res) {
   if (req.method === "POST") {
-    const { email, username, password, passwordagain, lt_username, gfg_username, cc_username } = req.body;
+    const { email, username, password, passwordagain,college, lt_username, gfg_username, cc_username } = req.body;
 
-    // Password validation
+    // Check if passwords match
     if (password !== passwordagain) {
-      res.redirect("/signup?msg=The two passwords don't match");
-      return;
+      return res.status(400).json({ msg: "The two passwords don't match" });
     }
 
-    // Store user data in cookies to use in the success page
-    const cookies = new Cookies(req, res);
-    cookies.set('signupData', JSON.stringify({ email, username, password, lt_username, gfg_username, cc_username }));
+    // Connect to the database
+    const client = await clientPromise;
+    const db = client.db("Users");
 
-    // Redirect to the signup success page
-    res.redirect("/signup-success");
+    // Check if username already exists
+    const existingUser = await db.collection("Profiles").findOne({ "Username": username });
+    if (existingUser) {
+      return res.status(400).json({ msg: "A user already has this username" });
+    }
+
+    // Hash the password
+    const password_hash = createHash('sha256').update(password).digest('hex');
+    const currentDate = new Date().toUTCString();
+
+    // Create the user object
+    const userObject = {
+      Email: email,
+      Username: username,
+      Password: password_hash,
+      Created: currentDate,
+      College: college,
+      Lt_username: lt_username,
+      GFG_username: gfg_username,
+      CC_username: cc_username,
+      resetPasswordToken: null,
+      resetPasswordExpires: null,
+    };
+
+    // Insert the user into the database
+    await db.collection("Profiles").insertOne(userObject);
+
+    // Set cookie
+    const cookies = new Cookies(req, res);
+    cookies.set('username', username);
+    
+    res.redirect("/")
   } else {
-    res.redirect("/");
+    res.redirect("/")
   }
 }
