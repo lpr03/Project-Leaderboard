@@ -90,8 +90,11 @@ export default function SignupPage({ username }) {
                                 <option value="Nalla Malla Reddy Engineering College">Nalla Malla Reddy Engineering College</option>
                                 <option value="Nalla Narasimha Reddy College of Engineering">Nalla Narasimha Reddy College of Engineering</option>
                                 <option value="ACE Engineering College">ACE Engineering College</option>
-                                <option value="Sreenidhi Institute of Science Technology">Sreenidhi Institute of Science Technology</option>
+                                <option value="Sreenidhi Institute of Science and Technology">Sreenidhi Institute of Science and Technology</option>
+                                <option value="Aurora's Technological and Management Academy">Aurora's Technological and Management Academy</option>
+                                <option value="Kommuri Pratap Reddy Institute of Technology">Kommuri Pratap Reddy Institute of Technology</option>
                                 <option value="Megha Institute of Engineering and Technology for Women">Megha Institute of Engineering and Technology for Women</option>
+                                <option value="Princeton College of Engineering and Technology">Princeton College of Engineering and Technology</option>
                             </select>
                         </div>
                         <div className="form-group">
